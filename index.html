@@ -9,84 +9,539 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
-        :root {
-            --color-charcoal: #0a0a0a; --color-gold: #d4af37; --color-smoke-white: #f2f2f2;
-            --color-silver-grey: #bfbfbf; --color-green-correct: #4CAF50; --color-red-wrong: #F44336;
-            --font-title: 'Cinzel Decorative', serif; --font-content: 'Lora', serif;
-            --transition-speed-slide: 0.6s; --transition-speed-chunk: 0.5s;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background-color: var(--color-charcoal); color: var(--color-smoke-white); font-family: var(--font-content);
-            overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh;
-            background-image: radial-gradient(circle at 25% 50%, rgba(212, 175, 55, 0.08) 0%, rgba(10, 10, 10, 0) 40%);
-        }
-        .main-nav {
-            position: fixed; top: 0; left: 0; width: 100%; display: flex; justify-content: center;
-            padding: 20px 0; z-index: 100; background: linear-gradient(to bottom, rgba(133, 133, 133, 0.7), transparent);
-        }
-        .main-nav a {
-            color: var(--color-silver-grey); text-decoration: none; margin: 0 25px;
-            font-family: var(--font-title); font-size: 1.1em; transition: all 0.4s ease; letter-spacing: 1px;
-        }
-        .main-nav a:hover, .main-nav a.active {
-            color: var(--color-gold); text-shadow: 0 0 10px var(--color-gold); transform: scale(1.1);
-        }
-        /* 1. Thay đổi alignment trong container chính */
+  /* ==============================================
+   BIẾN TOÀN CỤC (VARIABLES)
+   ============================================== */
+:root {
+    --color-charcoal: #0a0a0a;
+    --color-gold: #d4af37;
+    --color-smoke-white: #f2f2f2;
+    --color-silver-grey: #bfbfbf;
+    --color-green-correct: #4CAF50;
+    --color-red-wrong: #F44336;
+    --font-title: 'Cinzel Decorative', serif;
+    --font-content: 'Lora', serif;
+    --transition-speed-slide: 0.6s;
+    --transition-speed-chunk: 0.5s;
+}
+
+/* ==============================================
+   THIẾT LẬP CƠ BẢN (BASE SETUP)
+   ============================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--color-charcoal);
+    color: var(--color-smoke-white);
+    font-family: var(--font-content);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: radial-gradient(circle at 25% 50%, rgba(212, 175, 55, 0.08) 0%, rgba(10, 10, 10, 0) 40%);
+}
+
+/* ==============================================
+   THANH ĐIỀU HƯỚNG CHÍNH (MAIN NAVIGATION)
+   ============================================== */
+.main-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+    z-index: 100;
+    background: linear-gradient(to bottom, rgba(133, 133, 133, 0.7), transparent);
+}
+
+.main-nav a {
+    color: var(--color-silver-grey);
+    text-decoration: none;
+    margin: 0 25px;
+    font-family: var(--font-title);
+    font-size: 1.1em;
+    transition: all 0.4s ease;
+    letter-spacing: 1px;
+}
+
+.main-nav a:hover,
+.main-nav a.active {
+    color: var(--color-gold);
+    text-shadow: 0 0 10px var(--color-gold);
+    transform: scale(1.1);
+}
+
+/* ==============================================
+   BỐ CỤC CHÍNH (MAIN LAYOUT)
+   ============================================== */
 .container {
     display: grid;
     grid-template-columns: 1fr 1.5fr;
     width: 90%;
     max-width: 1400px;
     height: 85vh;
-    align-items: stretch; /* QUAN TRỌNG: Thay 'center' bằng 'stretch' */
+    align-items: stretch;
     gap: 40px;
 }
-        /* 2. Đảm bảo khối chứa ảnh chiếm toàn bộ chiều cao */
-/* Điều chỉnh cho ảnh tượng triết học */
+
+/* ==============================================
+   KHỐI HÌNH ẢNH (IMAGE BLOCK)
+   ============================================== */
 .philosopher-statue .philosopher-image {
     width: 100%;
     height: 100%;
-    max-height: 100%;
     object-fit: contain;
     filter: grayscale(0.2) brightness(0.9) drop-shadow(5px 5px 25px rgba(0, 0, 0, 0.7));
-    z-index: 2; /* Đảm bảo tượng nằm trên các đám mây */
     position: relative; /* Cần thiết để z-index hoạt động */
+    z-index: 2; /* Đảm bảo tượng nằm trên các đám mây và spotlight */
 }
 
-/* Các lớp cho hình ảnh mây */
+/* Hiệu ứng spotlight phía sau tượng */
+.philosopher-statue::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 600px;
+    background: radial-gradient(ellipse at center, rgba(242, 242, 242, 0.15) 0%, rgba(242, 242, 242, 0) 70%);
+    filter: blur(20px);
+    opacity: 0;
+    animation: fadeInSpotlight 2s ease-out 1s forwards;
+    z-index: 0; /* Đảm bảo spotlight nằm dưới tất cả */
+}
+
+/* Hiệu ứng mây trang trí */
 .cloud {
     position: absolute;
-    width: 30%; /* Kích thước tương đối của mây, có thể điều chỉnh */
-    opacity: 0.6; /* Làm mờ một chút cho hiệu ứng ảo */
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3)); /* Hiệu ứng tỏa sáng nhẹ */
-    z-index: 1; /* Đảm bảo mây nằm dưới tượng */
+    width: 30%;
+    opacity: 0.6;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+    z-index: 1; /* Nằm giữa spotlight và tượng */
 }
 
 .cloud-bottom-left {
-    bottom: 0%; /* Cách đáy 0% */
-    left: -10%; /* Lấn ra ngoài khung một chút từ bên trái */
-    animation: cloudDrift1 20s ease-in-out infinite alternate; /* Hiệu ứng lơ lửng */
+    bottom: 0%;
+    left: -10%;
+    animation: cloudDrift1 20s ease-in-out infinite alternate;
 }
 
 .cloud-top-right {
-    top: 5%; /* Cách đỉnh 5% */
-    right: -10%; /* Lấn ra ngoài khung một chút từ bên phải */
-    width: 25%; /* Có thể cho đám mây này nhỏ hơn một chút */
-    animation: cloudDrift2 25s ease-in-out infinite alternate-reverse; /* Hiệu ứng lơ lửng ngược lại */
+    top: 5%;
+    right: -10%;
+    width: 25%;
+    animation: cloudDrift2 25s ease-in-out infinite alternate-reverse;
 }
 
-/* Keyframes cho hiệu ứng mây lơ lửng */
+/* ==============================================
+   KHUNG NỘI DUNG & SLIDES (CONTENT FRAME & SLIDES)
+   ============================================== */
+.content-frame {
+    height: 100%;
+    position: relative;
+}
+
+.slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-speed-slide) ease-in-out, transform var(--transition-speed-slide) ease-in-out;
+    transform: translateY(20px);
+}
+
+.slide.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.slide-content {
+    padding: 40px;
+    height: 100%; 
+    background: rgba(40, 40, 40, 0.3);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    overflow: hidden;
+    position: relative;
+}
+
+.slide-title {
+    font-family: var(--font-title);
+    font-size: 2.5em;
+    text-transform: uppercase;
+    color: var(--color-smoke-white);
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+    padding-bottom: 15px;
+}
+
+/* ==============================================
+   CÁC PHẦN NỘI DUNG (CONTENT CHUNKS)
+   ============================================== */
+.content-chunk-wrapper {
+    height: calc(100% - 130px);
+    position: relative;
+}
+
+.content-chunk {
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    width: 100%;
+    transition: opacity var(--transition-speed-chunk) ease-in-out, transform var(--transition-speed-chunk) ease-in-out;
+    transform: translateY(15px);
+}
+
+.content-chunk.active {
+    opacity: 1;
+    visibility: visible;
+    position: relative;
+    transform: translateY(0);
+}
+
+.content-chunk h2 {
+    font-family: 'Playfair Display', serif;
+    color: var(--color-gold);
+    margin: 10px 0;
+    font-size: 1.4em;
+}
+
+.content-chunk h3 {
+    font-family: 'Playfair Display', serif;
+    color: var(--color-smoke-white);
+    margin-top: 15px;
+    margin-bottom: 8px;
+    font-size: 1.2em;
+}
+
+.content-chunk p,
+.content-chunk ul,
+.content-chunk li {
+    font-size: 1.1em;
+    line-height: 1.7;
+    color: var(--color-silver-grey);
+    margin-bottom: 15px;
+}
+
+.content-chunk ul {
+    list-style-position: inside;
+    padding-left: 10px;
+}
+
+.content-chunk li {
+    margin-bottom: 8px;
+}
+
+.content-chunk b {
+    color: var(--color-smoke-white);
+    font-weight: 600;
+}
+
+/* Điều hướng chunks */
+.chunk-nav {
+    position: absolute;
+    bottom: 20px;
+    right: 40px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(10, 10, 10, 0.5);
+    padding: 5px 10px;
+    border-radius: 20px;
+}
+
+.chunk-nav-btn {
+    background: transparent;
+    border: 1px solid var(--color-silver-grey);
+    color: var(--color-silver-grey);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+}
+
+.chunk-nav-btn:hover:not(:disabled) {
+    background: var(--color-gold);
+    color: var(--color-charcoal);
+    border-color: var(--color-gold);
+}
+
+.chunk-nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.chunk-counter {
+    font-family: var(--font-title);
+    color: var(--color-silver-grey);
+    font-size: 1em;
+    min-width: 50px;
+    text-align: center;
+}
+
+/* ==============================================
+   PHẦN QUIZ
+   ============================================== */
+#quiz-container {
+    position: relative;
+    height: calc(100% - 100px);
+}
+
+.quiz-question {
+    display: none;
+}
+
+.quiz-question.active {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+
+.quiz-question p {
+    font-weight: 600;
+    color: var(--color-smoke-white);
+    margin-bottom: 20px;
+    font-size: 1.2em;
+}
+
+.quiz-options label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(191, 191, 191, 0.2);
+}
+
+.quiz-options label:hover {
+    background-color: rgba(212, 175, 55, 0.1);
+    border-color: rgba(212, 175, 55, 0.4);
+}
+
+.quiz-question.answered .quiz-options {
+    pointer-events: none;
+}
+
+.quiz-options label.correct {
+    background-color: rgba(76, 175, 80, 0.2);
+    border-color: var(--color-green-correct);
+}
+
+.quiz-options label.wrong {
+    background-color: rgba(244, 67, 54, 0.2);
+    border-color: var(--color-red-wrong);
+}
+
+.quiz-options input[type="radio"] {
+    display: none;
+}
+
+.quiz-options .custom-radio {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--color-silver-grey);
+    border-radius: 50%;
+    margin-right: 15px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    transition: border-color 0.3s;
+    flex-shrink: 0;
+}
+
+.quiz-options input[type="radio"]:checked+.custom-radio {
+    border-color: var(--color-gold);
+}
+
+.quiz-options input[type="radio"]:checked+.custom-radio::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background-color: var(--color-gold);
+    border-radius: 50%;
+}
+
+/* Điều hướng Quiz */
+#quiz-navigation {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#question-counter {
+    font-family: var(--font-title);
+    font-size: 1.1em;
+    color: var(--color-silver-grey);
+}
+
+#next-question-btn,
+#restart-quiz-btn {
+    font-family: var(--font-title);
+    font-size: 1em;
+    padding: 10px 25px;
+    background-color: var(--color-gold);
+    color: var(--color-charcoal);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: none;
+}
+
+#next-question-btn:hover,
+#restart-quiz-btn:hover {
+    opacity: 0.9;
+    box-shadow: 0 0 20px var(--color-gold);
+}
+
+/* Kết quả Quiz */
+#quiz-results {
+    display: none;
+    text-align: center;
+    animation: fadeIn 0.5s ease;
+}
+
+#quiz-results h2 {
+    font-family: var(--font-title);
+    font-size: 2em;
+    color: var(--color-gold);
+    margin-bottom: 20px;
+}
+
+#quiz-results p {
+    font-size: 1.5em;
+    margin-bottom: 30px;
+}
+
+/* ==============================================
+   HIỆU ỨNG & KEYFRAMES
+   ============================================== */
+
+/* Hiệu ứng mờ dần và trượt nhẹ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hiệu ứng spotlight xuất hiện */
+@keyframes fadeInSpotlight {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 0.8;
+    }
+}
+
+/* Hiệu ứng mây trôi */
 @keyframes cloudDrift1 {
     0% { transform: translate(0, 0); }
-    50% { transform: translate(15%, -5%); } /* Di chuyển chéo nhẹ */
+    50% { transform: translate(15%, -5%); }
     100% { transform: translate(0, 0); }
 }
 
 @keyframes cloudDrift2 {
     0% { transform: translate(0, 0); }
-    50% { transform: translate(-10%, 8%); } /* Di chuyển chéo nhẹ khác */
+    50% { transform: translate(-10%, 8%); }
     100% { transform: translate(0, 0); }
+}
+
+/* --- HIỆU ỨNG HẠT NỀN CHUYỂN ĐỘNG --- */
+@keyframes move-particles-up {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-200vh); 
+  }
+}
+
+body::before, 
+body::after {
+  content: '';
+  position: fixed;
+  z-index: -1;
+  top: 100vh;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  background: transparent;
+  border-radius: 50%;
+  animation: move-particles-up linear infinite;
+}
+
+body::before {
+  /* Giữ nguyên kích thước 1px cho lớp hạt ở xa */
+  animation-duration: 45s;
+  /* Đã tăng số lượng hạt từ 50 lên 80 */
+  box-shadow: 
+    83vw 8vh #fff, 1vw 23vh #fff, 92vw 3vh #fff, 65vw 51vh #fff, 
+    3vw 89vh #fff, 60vw 37vh #fff, 8vw 2vh #fff, 48vw 28vh #fff, 
+    54vw 89vh #fff, 2vw 9vh #fff, 75vw 6vh #fff, 38vw 80vh #fff, 
+    80vw 23vh #fff, 35vw 3vh #fff, 51vw 13vh #fff, 13vw 8vh #fff, 
+    41vw 98vh #fff, 88vw 53vh #fff, 72vw 42vh #fff, 64vw 98vh #fff,
+    15vw 75vh #fff, 98vw 12vh #fff, 25vw 55vh #fff, 78vw 88vh #fff, 
+    5vw 45vh #fff, 42vw 69vh #fff, 89vw 21vh #fff, 21vw 95vh #fff, 
+    68vw 1vh #fff, 11vw 66vh #fff, 95vw 48vh #fff, 33vw 29vh #fff, 
+    71vw 71vh #fff, 18vw 38vh #fff, 58vw 58vh #fff, 99vw 99vh #fff, 
+    4vw 17vh #fff, 49vw 82vh #fff, 28vw 4vh #fff, 77vw 61vh #fff, 
+    19vw 86vh #fff, 61vw 22vh #fff, 84vw 78vh #fff, 14vw 50vh #fff, 
+    50vw 10vh #fff, 90vw 90vh #fff, 22vw 33vh #fff, 73vw 5vh #fff, 
+    37vw 63vh #fff, 81vw 43vh #fff, 6vw 62vh #fff, 56vw 7vh #fff, 
+    43vw 48vh #fff, 91vw 79vh #fff, 29vw 19vh #fff, 70vw 94vh #fff;
+}
+
+body::after {
+  /* Tăng kích thước hạt ở gần lên 3px */
+  width: 3px;
+  height: 3px;
+  animation-duration: 25s;
+  /* Đã tăng số lượng hạt từ 50 lên 80 */
+  box-shadow: 
+    20vw 15vh #fff, 88vw 4vh #fff, 93vw 33vh #fff, 68vw 57vh #fff, 
+    8vw 93vh #fff, 53vw 41vh #fff, 33vw 12vh #fff, 51vw 32vh #fff, 
+    55vw 81vh #fff, 13vw 19vh #fff, 70vw 16vh #fff, 42vw 83vh #fff, 
+    83vw 27vh #fff, 40vw 13vh #fff, 55vw 23vh #fff, 17vw 18vh #fff, 
+    45vw 92vh #fff, 92vw 57vh #fff, 77vw 47vh #fff, 69vw 92vh #fff,
+    10vw 80vh #fff, 96vw 25vh #fff, 29vw 60vh #fff, 82vw 95vh #fff, 
+    7vw 50vh #fff, 47vw 72vh #fff, 85vw 28vh #fff, 24vw 99vh #fff, 
+    72vw 8vh #fff, 16vw 68vh #fff, 97vw 53vh #fff, 36vw 31vh #fff, 
+    74vw 76vh #fff, 12vw 42vh #fff, 62vw 62vh #fff, 91vw 96vh #fff, 
+    6vw 20vh #fff, 52vw 85vh #fff, 31vw 7vh #fff, 79vw 65vh #fff, 
+    23vw 88vh #fff, 66vw 26vh #fff, 87vw 79vh #fff, 18vw 54vh #fff, 
+    56vw 14vh #fff, 94vw 91vh #fff, 27vw 36vh #fff, 76vw 11vh #fff, 
+    39vw 67vh #fff, 86vw 47vh #fff, 4vw 58vh #fff, 63vw 83vh #fff;
 }
 
 /* Đảm bảo spotlight vẫn nằm sau tượng */
@@ -208,32 +663,32 @@
             
             <div id="slide-0" class="slide">
                 <div class="slide-content">
-                    <h1 class="slide-title">Hình thái kinh tế – xã hội</h1>
+                    <h1 class="slide-title" style="text-align: center;">Hình thái kinh tế – xã hội</h1>
                     <div class="content-chunk-wrapper">
                         <div class="content-chunk">
-                            <h2>Mở đầu</h2>
-                            <p>Xã hội loài người luôn biến đổi, phát triển qua các giai đoạn: cộng sản nguyên thủy → chiếm hữu nô lệ → phong kiến → tư bản chủ nghĩa → cộng sản chủ nghĩa.</p>
+                            <h2>Mở đầu:</h2>
+                            <p style="text-align: center; font-size: 24px;">    - Xã hội loài người luôn biến đổi, phát triển qua các giai đoạn: <br> <p style="font-size:20px; text-align: center;"><i>Cộng sản nguyên thủy <br> ↓ <br>Chiếm hữu nô lệ <br> ↓ <br> Phong kiến <br> ↓ <br>Tư bản chủ nghĩa <br> ↓ <br> Cộng sản chủ nghĩa.</i></p>
                         </div>
                         <div class="content-chunk">
-                            <h2>1. Khái niệm</h2>
-                            <p>Là kiểu xã hội trong một giai đoạn lịch sử, gồm 3 yếu tố:</p>
-                            <ul>
+                            <h2>1. Khái niệm</h2><br><br>
+                            <p style="font-size: 24px; text-align: center;">Là kiểu xã hội trong một giai đoạn lịch sử, gồm 3 yếu tố:</p>
+                            <ul style ="font-size: 20px;">
                                 <li><b>Lực lượng sản xuất:</b> công cụ lao động, khoa học – kỹ thuật, sức lao động.</li>
                                 <li><b>Quan hệ sản xuất:</b> quan hệ sở hữu, quản lý, phân phối.</li>
                                 <li><b>Kiến trúc thượng tầng:</b> chính trị, pháp luật, nhà nước, tôn giáo, tư tưởng.</li>
                             </ul>
                         </div>
                         <div class="content-chunk">
-                            <h2>2. Quy luật phát triển</h2>
-                            <ul>
+                            <h2>2. Quy luật phát triển</h2><br><br><br><br>
+                            <ul style="font-size: 20px;">
                                 <li>Quan hệ sản xuất phải phù hợp với lực lượng sản xuất.</li>
                                 <li>Khi mâu thuẫn gay gắt, cách mạng xã hội xảy ra, hình thái mới ra đời.</li>
                                 <li>Quá trình mang tính khách quan, lịch sử – tự nhiên.</li>
                             </ul>
                         </div>
                         <div class="content-chunk">
-                            <h2>3. Các hình thái cơ bản</h2>
-                             <ul>
+                            <h2>3. Các hình thái cơ bản</h2><br><br><br>
+                             <ul style="font-size: 20px;">
                                 <li>1. Cộng sản nguyên thủy.</li>
                                 <li>2. Chiếm hữu nô lệ.</li>
                                 <li>3. Phong kiến.</li>
@@ -242,8 +697,8 @@
                             </ul>
                         </div>
                         <div class="content-chunk">
-                            <h2>4. Ý nghĩa</h2>
-                            <ul>
+                            <h2>4. Ý nghĩa</h2> <br><br>
+                            <ul style="font-size: 20px;">
                                 <li>Khẳng định sự phát triển xã hội có quy luật khách quan.</li>
                                 <li>Kinh tế quyết định chính trị, pháp luật, văn hóa, nhưng tinh thần cũng tác động ngược lại.</li>
                                 <li>Khẳng định tính tất yếu của chủ nghĩa xã hội.</li>
@@ -251,8 +706,8 @@
                             </ul>
                         </div>
                         <div class="content-chunk">
-                             <h2>5. Liên hệ Việt Nam</h2>
-                            <ul>
+                             <h2>5. Liên hệ Việt Nam</h2><br><br>
+                            <ul style="font-size: 20px;">
                                 <li>Việt Nam không đi tuần tự mà từ phong kiến, thuộc địa nửa phong kiến tiến thẳng lên xã hội chủ nghĩa.</li>
                                 <li><b>Sau 1945:</b> Lật đổ ách thống trị, mở ra thời kỳ quá độ lên CNXH.</li>
                                 <li><b>Từ 1986:</b> Đổi mới, phát triển kinh tế thị trường định hướng XHCN.</li>
@@ -260,8 +715,8 @@
                             </ul>
                         </div>
                         <div class="content-chunk">
-                            <h2>6. Kết luận</h2>
-                             <ul>
+                            <h2>6. Kết luận</h2><br><br>
+                             <ul style="font-size: 20px;">
                                 <li>Học thuyết Mác – Lênin giúp lý giải quy luật vận động của xã hội một cách khoa học.</li>
                                 <li>Sự phát triển của các hình thái kinh tế – xã hội là một quá trình lịch sử – tự nhiên.</li>
                                 <li>Việt Nam đã lựa chọn con đường đi lên CNXH phù hợp, đúng đắn và sáng tạo.</li>
@@ -282,11 +737,11 @@
 
             <div id="slide-1" class="slide">
                 <div class="slide-content">
-                    <h1 class="slide-title">Tiến trình lịch sử – tự nhiên</h1>
+                    <h1 class="slide-title" style="text-align: center;">Tiến trình lịch sử – tự nhiên</h1>
                     <div class="content-chunk-wrapper">
                         <div class="content-chunk">
-                            <h2>1. Ba yếu tố cơ bản</h2>
-                            <ul>
+                            <h2>1. Ba yếu tố cơ bản</h2><br><br>
+                            <ul style="font-size: 20px;">
                                 <li><b>Lực lượng sản xuất:</b> công cụ lao động, tri thức, kỹ năng của người lao động.</li>
                                 <li><b>Quan hệ sản xuất:</b> quan hệ giữa con người với nhau trong quá trình sản xuất.</li>
                                 <li><b>Kiến trúc thượng tầng:</b> hệ thống chính trị, pháp luật, tư tưởng, văn hóa, tôn giáo.</li>
@@ -294,26 +749,26 @@
                             </ul>
                         </div>
                         <div class="content-chunk">
-                            <h2>2. Quy luật phát triển</h2>
-                            <ul>
+                            <h2>2. Quy luật phát triển</h2><br><br>
+                            <ul style="font-size: 20px;">
                                 <li>Khi LLSX phát triển, QHSX cũ kìm hãm và tất yếu bị thay thế bằng QHSX mới tiến bộ hơn.</li>
                                 <li>Sự biến đổi trong QHSX kéo theo biến đổi cơ sở hạ tầng, từ đó dẫn đến biến đổi KTTT.</li>
                             </ul>
                         </div>
                         <div class="content-chunk">
-                            <h2>3. Các hình thái kinh tế - xã hội</h2>
-                            <p>Cộng sản nguyên thủy → Chiếm hữu nô lệ → Phong kiến → Tư bản chủ nghĩa → Xã hội chủ nghĩa → Cộng sản chủ nghĩa.</p>
+                            <h2>3. Các hình thái kinh tế - xã hội</h2><br><br>
+                            <p style="font-size: 20px;"> Cộng sản nguyên thủy → Chiếm hữu nô lệ → Phong kiến → Tư bản chủ nghĩa → Xã hội chủ nghĩa → Cộng sản chủ nghĩa.</p>
                         </div>
                         <div class="content-chunk">
-                            <h2>4. Tính logic và tính lịch sử</h2>
-                            <ul>
+                            <h2>4. Tính logic và tính lịch sử</h2><br><br>
+                            <ul style="font-size: 20px;">
                                 <li><b>Tính logic:</b> xã hội phát triển tuần tự từ thấp đến cao.</li>
                                 <li><b>Tính lịch sử:</b> quá trình có thể bỏ qua một hay vài hình thái. Ví dụ: Việt Nam bỏ qua giai đoạn phát triển TBCN để tiến thẳng lên xây dựng XHCN.</li>
                             </ul>
                         </div>
                          <div class="content-chunk">
-                            <h2>5. Ý nghĩa</h2>
-                            <ul>
+                            <h2>5. Ý nghĩa</h2><br><br>
+                            <ul style="font-size: 20px;">
                                 <li>Khẳng định xã hội loài người phát triển theo quy luật tất yếu.</li>
                                 <li>Giúp hiểu đúng con đường phát triển của nhân loại và của cách mạng Việt Nam.</li>
                             </ul>
@@ -326,59 +781,59 @@
                     </div>
                 </div>
                 <div class="presentation-footer">
-                    <div class="credits"><p><b>Trình bày:</b> Tên Nhóm</p><p><b>GVHD:</b> Tên Giảng Viên</p></div>
+                    <div class="credits"><p><b>Trình bày:</b> Nhóm 10</p><p><b>GVHD:</b> Nguyễn Thị Hằng</p></div>
                     <div class="slide-nav-buttons"><button class="slide-nav-button prev-slide">← TRƯỚC</button><button class="slide-nav-button next-slide">TIẾP THEO →</button></div>
                 </div>
             </div>
 
              <div id="slide-2" class="slide">
                 <div class="slide-content">
-                    <h1 class="slide-title">Giá trị khoa học & Ý nghĩa cách mạng</h1>
+                    <h1 class="slide-title" style="text-align: center;">Giá trị khoa học & Ý nghĩa cách mạng</h1>
                     <div class="content-chunk-wrapper">
                         <div class="content-chunk">
-                             <h2>A. Giá trị khoa học bền vững</h2>
-                            <h3>1. Thế giới quan và phương pháp luận khoa học</h3>
-                            <ul>
+                             <h2>A. Giá trị khoa học bền vững</h2><br>
+                            <h3>1. Thế giới quan và phương pháp luận khoa học</h3><br><br>
+                            <ul style="font-size: 20px;">
                                 <li>Chủ nghĩa duy vật lịch sử biến nghiên cứu xã hội từ suy đoán thành khoa học.</li>
                                 <li>Bác bỏ quan điểm duy tâm, khẳng định lịch sử phát triển theo quy luật khách quan.</li>
                             </ul>
                         </div>
                         <div class="content-chunk">
-                             <h2>A. Giá trị khoa học bền vững</h2>
-                            <h3>2. Phương pháp luận khoa học</h3>
-                             <ul>
+                             <h2>A. Giá trị khoa học bền vững</h2><br>
+                            <h3>2. Phương pháp luận khoa học</h3><br><br>
+                             <ul style="font-size: 20px;">
                                 <li>Lấy hình thái kinh tế – xã hội làm đơn vị phân tích, phân loại xã hội một cách hệ thống.</li>
                                 <li>Phân tích bắt đầu từ cơ sở hạ tầng (QHSX), coi kinh tế quyết định chính trị, tư tưởng.</li>
                             </ul>
                         </div>
                          <div class="content-chunk">
-                            <h2>A. Giá trị khoa học bền vững</h2>
-                            <h3>3. Lý giải động lực phát triển</h3>
-                            <ul>
+                            <h2>A. Giá trị khoa học bền vững</h2><br>
+                            <h3>3. Lý giải động lực phát triển</h3><br><br>
+                            <ul style="font-size: 20px;">
                                 <li>Động lực phát triển là mâu thuẫn giữa lực lượng sản xuất và quan hệ sản xuất.</li>
                                 <li>Ví dụ: sự ra đời máy móc làm chế độ phong kiến lạc hậu, buộc xã hội chuyển sang TBCN.</li>
                             </ul>
                         </div>
                         <div class="content-chunk">
-                            <h2>B. Ý nghĩa cách mạng</h2>
-                            <h3>1. Cơ sở lý luận cho con đường cách mạng Việt Nam</h3>
-                            <ul>
+                            <h2>B. Ý nghĩa cách mạng</h2><br>
+                            <h3>1. Cơ sở lý luận cho con đường cách mạng Việt Nam</h3><br><br>
+                            <ul style="font-size: 20px;">
                                 <li>Khẳng định quá độ lên CNXH bỏ qua chế độ TBCN là tất yếu.</li>
                                 <li>“Bỏ qua” là không để QHSX và KTTT tư bản thống trị, nhưng vẫn kế thừa thành tựu của LLSX (khoa học – công nghệ).</li>
                             </ul>
                         </div>
                         <div class="content-chunk">
-                            <h2>B. Ý nghĩa cách mạng</h2>
-                             <h3>2. Công cụ phương pháp luận cho lãnh đạo và quản lý</h3>
-                            <ul>
+                            <h2>B. Ý nghĩa cách mạng</h2><br>
+                             <h3>2. Công cụ phương pháp luận cho lãnh đạo và quản lý</h3><br><br>
+                            <ul style="font-size: 20px;">
                                 <li>Kim chỉ nam để Đảng xác định mô hình, mục tiêu xã hội chủ nghĩa.</li>
                                 <li>Nhấn mạnh: xây dựng xã hội mới phải bắt đầu từ phát triển lực lượng sản xuất.</li>
                             </ul>
                         </div>
                         <div class="content-chunk">
-                            <h2>B. Ý nghĩa cách mạng</h2>
-                             <h3>3. Giá trị hiện đại và vai trò nền tảng</h3>
-                             <ul>
+                            <h2>B. Ý nghĩa cách mạng</h2><br>
+                             <h3>3. Giá trị hiện đại và vai trò nền tảng</h3><br><br>
+                             <ul style="font-size: 20px;">
                                  <li>Lý luận hình thái kinh tế – xã hội vẫn giữ nguyên giá trị khoa học và cách mạng.</li>
                                  <li>Là cơ sở lý luận cho CNXH khoa học, được vận dụng trong con đường quá độ lên CNXH ở Việt Nam.</li>
                              </ul>
@@ -391,7 +846,7 @@
                     </div>
                 </div>
                 <div class="presentation-footer">
-                    <div class="credits"><p><b>Trình bày:</b> Tên Nhóm</p><p><b>GVHD:</b> Tên Giảng Viên</p></div>
+                    <div class="credits"><p><b>Trình bày:</b> Nhóm 10</p><p><b>GVHD:</b> Nguyễn Thị Hằng</p></div>
                     <div class="slide-nav-buttons"><button class="slide-nav-button prev-slide">← TRƯỚC</button><button class="slide-nav-button next-slide">TIẾP THEO →</button></div>
                 </div>
             </div>
@@ -400,20 +855,20 @@
                 <div class="slide-content">
                     <h1 class="slide-title">Câu hỏi trắc nghiệm</h1>
                     <div id="quiz-container">
-                        <div class="quiz-question" data-correct-answer="C"><p>1. Tiền đề xuất phát của quan điểm duy vật lịch sử là:</p><div class="quiz-options"><label><input type="radio" name="q1" value="A"><span class="custom-radio"></span><span>A. Con người trừu tượng</span></label><label><input type="radio" name="q1" value="B"><span class="custom-radio"></span><span>B. Con người lao động</span></label><label><input type="radio" name="q1" value="C"><span class="custom-radio"></span><span>C. Con người hiện thực</span></label><label><input type="radio" name="q1" value="D"><span class="custom-radio"></span><span>D. Con người tư duy</span></label></div></div>
-                        <div class="quiz-question" data-correct-answer="D"><p>2. Điền từ: ‘…’ là cơ sở của sự tồn tại và phát triển của xã hội loài người.</p><div class="quiz-options"><label><input type="radio" name="q2" value="A"><span class="custom-radio"></span><span>A. Hoạt động tinh thần</span></label><label><input type="radio" name="q2" value="B"><span class="custom-radio"></span><span>B. Sản xuất tinh thần</span></label><label><input type="radio" name="q2" value="C"><span class="custom-radio"></span><span>C. Hoạt động vật chất</span></label><label><input type="radio" name="q2" value="D"><span class="custom-radio"></span><span>D. Sản xuất vật chất</span></label></div></div>
-                        <div class="quiz-question" data-correct-answer="A"><p>3. Xã hội có các loại hình sản xuất cơ bản là:</p><div class="quiz-options"><label><input type="radio" name="q3" value="A"><span class="custom-radio"></span><span>A. Sản xuất vật chất, sản xuất tinh thần, sản xuất ra bản thân con người</span></label><label><input type="radio" name="q3" value="B"><span class="custom-radio"></span><span>B. Sản xuất ra của cải vật chất, đời sống tinh thần và nghệ thuật</span></label><label><input type="radio" name="q3" value="C"><span class="custom-radio"></span><span>C. Sản xuất ra văn hóa, con người và đời sống tinh thần</span></label><label><input type="radio" name="q3" value="D"><span class="custom-radio"></span><span>D. Sản xuất vật chất, sản xuất tinh thần, sản xuất văn hóa</span></label></div></div>
-                        <div class="quiz-question" data-correct-answer="B"><p>4. Lực lượng sản xuất bao gồm:</p><div class="quiz-options"><label><input type="radio" name="q4" value="A"><span class="custom-radio"></span><span>A. Người lao động và đối tượng lao động</span></label><label><input type="radio" name="q4" value="B"><span class="custom-radio"></span><span>B. Người lao động và tư liệu sản xuất</span></label><label><input type="radio" name="q4" value="C"><span class="custom-radio"></span><span>C. Người lao động và công cụ lao động</span></label><label><input type="radio" name="q4" value="D"><span class="custom-radio"></span><span>D. Người lao động và tư liệu lao động</span></label></div></div>
-                        <div class="quiz-question" data-correct-answer="D"><p>5. Thứ tự các hình thái kinh tế – xã hội:</p><div class="quiz-options"><label><input type="radio" name="q5" value="A"><span class="custom-radio"></span><span>A. CSNT, tư bản, phong kiến, CHNL, CSCN</span></label><label><input type="radio" name="q5" value="B"><span class="custom-radio"></span><span>B. CHNL, CSNT, phong kiến, TBCN, CSCN</span></label><label><input type="radio" name="q5" value="C"><span class="custom-radio"></span><span>C. Tư bản, phong kiến, CHNL, CSNT, CSCN</span></label><label><input type="radio" name="q5" value="D"><span class="custom-radio"></span><span>D. CSNT, CHNL, phong kiến, TBCN, CSCN</span></label></div></div>
-                        <div class="quiz-question" data-correct-answer="D"><p>6. Hình thái có quan hệ sản xuất tư bản chủ nghĩa:</p><div class="quiz-options"><label><input type="radio" name="q6" value="A"><span class="custom-radio"></span><span>A. Cộng sản chủ nghĩa</span></label><label><input type="radio" name="q6" value="B"><span class="custom-radio"></span><span>B. Phong kiến</span></label><label><input type="radio" name="q6" value="C"><span class="custom-radio"></span><span>C. Xã hội chủ nghĩa</span></label><label><input type="radio" name="q6" value="D"><span class="custom-radio"></span><span>D. Tư bản chủ nghĩa</span></label></div></div>
-                        <div class="quiz-question" data-correct-answer="B"><p>7. Điền từ: ‘…’ và ‘…’ là hai mặt cơ bản của quá trình sản xuất.</p><div class="quiz-options"><label><input type="radio" name="q7" value="A"><span class="custom-radio"></span><span>A. CSHT / QHSX</span></label><label><input type="radio" name="q7" value="B"><span class="custom-radio"></span><span>B. LLSX / QHSX</span></label><label><input type="radio" name="q7" value="C"><span class="custom-radio"></span><span>C. CSHT / KTTT</span></label><label><input type="radio" name="q7" value="D"><span class="custom-radio"></span><span>D. LLSX / KTTT</span></label></div></div>
-                        <div class="quiz-question" data-correct-answer="C"><p>8. Cơ sở hạ tầng là:</p><div class="quiz-options"><label><input type="radio" name="q8" value="A"><span class="custom-radio"></span><span>A. Toàn bộ cơ cấu công – nông nghiệp</span></label><label><input type="radio" name="q8" value="B"><span class="custom-radio"></span><span>B. Toàn bộ đất đai, máy móc, phương tiện sản xuất</span></label><label><input type="radio" name="q8" value="C"><span class="custom-radio"></span><span>C. Toàn bộ quan hệ sản xuất hợp thành cơ sở kinh tế</span></label><label><input type="radio" name="q8" value="D"><span class="custom-radio"></span><span>D. Toàn bộ sinh hoạt vật chất của xã hội</span></label></div></div>
-                        <div class="quiz-question" data-correct-answer="A"><p>9. Chủ nghĩa xã hội là giai đoạn gì?</p><div class="quiz-options"><label><input type="radio" name="q9" value="A"><span class="custom-radio"></span><span>A. Giai đoạn đầu của hình thái cộng sản chủ nghĩa</span></label><label><input type="radio" name="q9" value="B"><span class="custom-radio"></span><span>B. Giai đoạn cuối của hình thái kinh tế – xã hội</span></label><label><input type="radio" name="q9" value="C"><span class="custom-radio"></span><span>C. Giai đoạn chuyển tiếp từ tư bản lên phong kiến</span></label><label><input type="radio" name="q9" value="D"><span class="custom-radio"></span><span>D. Giai đoạn phát triển cao hơn của tư bản</span></label></div></div>
-                        <div class="quiz-question" data-correct-answer="A"><p>10. Sự biến đổi quan hệ sản xuất do yếu tố nào quyết định?</p><div class="quiz-options"><label><input type="radio" name="q10" value="A"><span class="custom-radio"></span><span>A. Trình độ lực lượng sản xuất</span></label><label><input type="radio" name="q10" value="B"><span class="custom-radio"></span><span>B. Truyền thống văn hóa</span></label><label><input type="radio" name="q10" value="C"><span class="custom-radio"></span><span>C. Sự phong phú của đối tượng lao động</span></label><label><input type="radio" name="q10" value="D"><span class="custom-radio"></span><span>D. Thể chế chính trị</span></label></div></div>
-                        <div class="quiz-question" data-correct-answer="C"><p>11. Đặc trưng kinh tế – xã hội của chủ nghĩa tư bản là:</p><div class="quiz-options"><label><input type="radio" name="q11" value="A"><span class="custom-radio"></span><span>A. Sở hữu toàn dân về tư liệu sản xuất</span></label><label><input type="radio" name="q11" value="B"><span class="custom-radio"></span><span>B. Sở hữu của Nhà nước</span></label><label><input type="radio" name="q11" value="C"><span class="custom-radio"></span><span>C. Sở hữu tư nhân về TLSX của giai cấp tư sản</span></label><label><input type="radio" name="q11" value="D"><span class="custom-radio"></span><span>D. Sở hữu tư nhân của giai cấp công nhân</span></label></div></div>
-                        <div class="quiz-question" data-correct-answer="B"><p>12. Yếu tố quan trọng nhất trong lực lượng sản xuất là:</p><div class="quiz-options"><label><input type="radio" name="q12" value="A"><span class="custom-radio"></span><span>A. Tài nguyên khoáng sản</span></label><label><input type="radio" name="q12" value="B"><span class="custom-radio"></span><span>B. Người lao động</span></label><label><input type="radio" name="q12" value="C"><span class="custom-radio"></span><span>C. Tư liệu sản xuất</span></label><label><input type="radio" name="q12" value="D"><span class="custom-radio"></span><span>D. Công cụ lao động</span></label></div></div>
-                        <div class="quiz-question" data-correct-answer="B"><p>13. Trong thời kỳ quá độ lên CNXH, Việt Nam phải:</p><div class="quiz-options"><label><input type="radio" name="q13" value="A"><span class="custom-radio"></span><span>A. Xây dựng LLSX trước</span></label><label><input type="radio" name="q13" value="B"><span class="custom-radio"></span><span>B. Kết hợp phát triển LLSX với QHSX phù hợp</span></label><label><input type="radio" name="q13" value="C"><span class="custom-radio"></span><span>C. Thiết lập QHSX trước</span></label><label><input type="radio" name="q13" value="D"><span class="custom-radio"></span><span>D. Không can thiệp vào sự phát triển</span></label></div></div>
-                        <div class="quiz-question" data-correct-answer="A"><p>14. Nền kinh tế hàng hóa nhiều thành phần ở Việt Nam là do:</p><div class="quiz-options"><label><input type="radio" name="q14" value="A"><span class="custom-radio"></span><span>A. Trình độ lực lượng sản xuất</span></label><label><input type="radio" name="q14" value="B"><span class="custom-radio"></span><span>B. Nhận thức chính trị</span></label><label><input type="radio" name="q14" value="C"><span class="custom-radio"></span><span>C. Đặc điểm tự nhiên</span></label><label><input type="radio" name="q14" value="D"><span class="custom-radio"></span><span>D. Thành phần giai cấp</span></label></div></div>
+                        <div class="quiz-question" data-correct-answer="C"><p style="text-align: center; font-size: 24px;"><br>1. Tiền đề xuất phát của quan điểm duy vật lịch sử là:</p><div class="quiz-options"><label><input type="radio" name="q1" value="A"><span class="custom-radio"></span><span>A. Con người trừu tượng</span></label><label><input type="radio" name="q1" value="B"><span class="custom-radio"></span><span>B. Con người lao động</span></label><label><input type="radio" name="q1" value="C"><span class="custom-radio"></span><span>C. Con người hiện thực</span></label><label><input type="radio" name="q1" value="D"><span class="custom-radio"></span><span>D. Con người tư duy</span></label></div></div>
+                        <div class="quiz-question" data-correct-answer="D"><p style="text-align: center; font-size: 24px;"><br>2. Điền từ: ‘…’ là cơ sở của sự tồn tại và phát triển của xã hội loài người.</p><div class="quiz-options"><label><input type="radio" name="q2" value="A"><span class="custom-radio"></span><span>A. Hoạt động tinh thần</span></label><label><input type="radio" name="q2" value="B"><span class="custom-radio"></span><span>B. Sản xuất tinh thần</span></label><label><input type="radio" name="q2" value="C"><span class="custom-radio"></span><span>C. Hoạt động vật chất</span></label><label><input type="radio" name="q2" value="D"><span class="custom-radio"></span><span>D. Sản xuất vật chất</span></label></div></div>
+                        <div class="quiz-question" data-correct-answer="A"><p style="text-align: center; font-size: 24px;"><br>3. Xã hội có các loại hình sản xuất cơ bản là:</p><div class="quiz-options"><label><input type="radio" name="q3" value="A"><span class="custom-radio"></span><span>A. Sản xuất vật chất, sản xuất tinh thần, sản xuất ra bản thân con người</span></label><label><input type="radio" name="q3" value="B"><span class="custom-radio"></span><span>B. Sản xuất ra của cải vật chất, đời sống tinh thần và nghệ thuật</span></label><label><input type="radio" name="q3" value="C"><span class="custom-radio"></span><span>C. Sản xuất ra văn hóa, con người và đời sống tinh thần</span></label><label><input type="radio" name="q3" value="D"><span class="custom-radio"></span><span>D. Sản xuất vật chất, sản xuất tinh thần, sản xuất văn hóa</span></label></div></div>
+                        <div class="quiz-question" data-correct-answer="B"><p style="text-align: center; font-size: 24px;"><br>4. Lực lượng sản xuất bao gồm:</p><div class="quiz-options"><label><input type="radio" name="q4" value="A"><span class="custom-radio"></span><span>A. Người lao động và đối tượng lao động</span></label><label><input type="radio" name="q4" value="B"><span class="custom-radio"></span><span>B. Người lao động và tư liệu sản xuất</span></label><label><input type="radio" name="q4" value="C"><span class="custom-radio"></span><span>C. Người lao động và công cụ lao động</span></label><label><input type="radio" name="q4" value="D"><span class="custom-radio"></span><span>D. Người lao động và tư liệu lao động</span></label></div></div>
+                        <div class="quiz-question" data-correct-answer="D"><p style="text-align: center; font-size: 24px;"><br>5. Thứ tự các hình thái kinh tế – xã hội:</p><div class="quiz-options"><label><input type="radio" name="q5" value="A"><span class="custom-radio"></span><span>A. CSNT, tư bản, phong kiến, CHNL, CSCN</span></label><label><input type="radio" name="q5" value="B"><span class="custom-radio"></span><span>B. CHNL, CSNT, phong kiến, TBCN, CSCN</span></label><label><input type="radio" name="q5" value="C"><span class="custom-radio"></span><span>C. Tư bản, phong kiến, CHNL, CSNT, CSCN</span></label><label><input type="radio" name="q5" value="D"><span class="custom-radio"></span><span>D. CSNT, CHNL, phong kiến, TBCN, CSCN</span></label></div></div>
+                        <div class="quiz-question" data-correct-answer="D"><p style="text-align: center; font-size: 24px;"><br>6. Hình thái có quan hệ sản xuất tư bản chủ nghĩa:</p><div class="quiz-options"><label><input type="radio" name="q6" value="A"><span class="custom-radio"></span><span>A. Cộng sản chủ nghĩa</span></label><label><input type="radio" name="q6" value="B"><span class="custom-radio"></span><span>B. Phong kiến</span></label><label><input type="radio" name="q6" value="C"><span class="custom-radio"></span><span>C. Xã hội chủ nghĩa</span></label><label><input type="radio" name="q6" value="D"><span class="custom-radio"></span><span>D. Tư bản chủ nghĩa</span></label></div></div>
+                        <div class="quiz-question" data-correct-answer="B"><p style="text-align: center; font-size: 24px;"><br>7. Điền từ: ‘…’ và ‘…’ là hai mặt cơ bản của quá trình sản xuất.</p><div class="quiz-options"><label><input type="radio" name="q7" value="A"><span class="custom-radio"></span><span>A. CSHT / QHSX</span></label><label><input type="radio" name="q7" value="B"><span class="custom-radio"></span><span>B. LLSX / QHSX</span></label><label><input type="radio" name="q7" value="C"><span class="custom-radio"></span><span>C. CSHT / KTTT</span></label><label><input type="radio" name="q7" value="D"><span class="custom-radio"></span><span>D. LLSX / KTTT</span></label></div></div>
+                        <div class="quiz-question" data-correct-answer="C"><p style="text-align: center; font-size: 24px;"><br>8. Cơ sở hạ tầng là:</p><div class="quiz-options"><label><input type="radio" name="q8" value="A"><span class="custom-radio"></span><span>A. Toàn bộ cơ cấu công – nông nghiệp</span></label><label><input type="radio" name="q8" value="B"><span class="custom-radio"></span><span>B. Toàn bộ đất đai, máy móc, phương tiện sản xuất</span></label><label><input type="radio" name="q8" value="C"><span class="custom-radio"></span><span>C. Toàn bộ quan hệ sản xuất hợp thành cơ sở kinh tế</span></label><label><input type="radio" name="q8" value="D"><span class="custom-radio"></span><span>D. Toàn bộ sinh hoạt vật chất của xã hội</span></label></div></div>
+                        <div class="quiz-question" data-correct-answer="A"><p style="text-align: center; font-size: 24px;"><br>9. Chủ nghĩa xã hội là giai đoạn gì?</p><div class="quiz-options"><label><input type="radio" name="q9" value="A"><span class="custom-radio"></span><span>A. Giai đoạn đầu của hình thái cộng sản chủ nghĩa</span></label><label><input type="radio" name="q9" value="B"><span class="custom-radio"></span><span>B. Giai đoạn cuối của hình thái kinh tế – xã hội</span></label><label><input type="radio" name="q9" value="C"><span class="custom-radio"></span><span>C. Giai đoạn chuyển tiếp từ tư bản lên phong kiến</span></label><label><input type="radio" name="q9" value="D"><span class="custom-radio"></span><span>D. Giai đoạn phát triển cao hơn của tư bản</span></label></div></div>
+                        <div class="quiz-question" data-correct-answer="A"><p style="text-align: center; font-size: 24px;"><br>10. Sự biến đổi quan hệ sản xuất do yếu tố nào quyết định?</p><div class="quiz-options"><label><input type="radio" name="q10" value="A"><span class="custom-radio"></span><span>A. Trình độ lực lượng sản xuất</span></label><label><input type="radio" name="q10" value="B"><span class="custom-radio"></span><span>B. Truyền thống văn hóa</span></label><label><input type="radio" name="q10" value="C"><span class="custom-radio"></span><span>C. Sự phong phú của đối tượng lao động</span></label><label><input type="radio" name="q10" value="D"><span class="custom-radio"></span><span>D. Thể chế chính trị</span></label></div></div>
+                        <div class="quiz-question" data-correct-answer="C"><p style="text-align: center; font-size: 24px;"><br>11. Đặc trưng kinh tế – xã hội của chủ nghĩa tư bản là:</p><div class="quiz-options"><label><input type="radio" name="q11" value="A"><span class="custom-radio"></span><span>A. Sở hữu toàn dân về tư liệu sản xuất</span></label><label><input type="radio" name="q11" value="B"><span class="custom-radio"></span><span>B. Sở hữu của Nhà nước</span></label><label><input type="radio" name="q11" value="C"><span class="custom-radio"></span><span>C. Sở hữu tư nhân về TLSX của giai cấp tư sản</span></label><label><input type="radio" name="q11" value="D"><span class="custom-radio"></span><span>D. Sở hữu tư nhân của giai cấp công nhân</span></label></div></div>
+                        <div class="quiz-question" data-correct-answer="B"><p style="text-align: center; font-size: 24px;"><br>12. Yếu tố quan trọng nhất trong lực lượng sản xuất là:</p><div class="quiz-options"><label><input type="radio" name="q12" value="A"><span class="custom-radio"></span><span>A. Tài nguyên khoáng sản</span></label><label><input type="radio" name="q12" value="B"><span class="custom-radio"></span><span>B. Người lao động</span></label><label><input type="radio" name="q12" value="C"><span class="custom-radio"></span><span>C. Tư liệu sản xuất</span></label><label><input type="radio" name="q12" value="D"><span class="custom-radio"></span><span>D. Công cụ lao động</span></label></div></div>
+                        <div class="quiz-question" data-correct-answer="B"><p style="text-align: center; font-size: 24px;"><br>13. Trong thời kỳ quá độ lên CNXH, Việt Nam phải:</p><div class="quiz-options"><label><input type="radio" name="q13" value="A"><span class="custom-radio"></span><span>A. Xây dựng LLSX trước</span></label><label><input type="radio" name="q13" value="B"><span class="custom-radio"></span><span>B. Kết hợp phát triển LLSX với QHSX phù hợp</span></label><label><input type="radio" name="q13" value="C"><span class="custom-radio"></span><span>C. Thiết lập QHSX trước</span></label><label><input type="radio" name="q13" value="D"><span class="custom-radio"></span><span>D. Không can thiệp vào sự phát triển</span></label></div></div>
+                        <div class="quiz-question" data-correct-answer="A"><p style="text-align: center; font-size: 24px;"><br>14. Nền kinh tế hàng hóa nhiều thành phần ở Việt Nam là do:</p><div class="quiz-options"><label><input type="radio" name="q14" value="A"><span class="custom-radio"></span><span>A. Trình độ lực lượng sản xuất</span></label><label><input type="radio" name="q14" value="B"><span class="custom-radio"></span><span>B. Nhận thức chính trị</span></label><label><input type="radio" name="q14" value="C"><span class="custom-radio"></span><span>C. Đặc điểm tự nhiên</span></label><label><input type="radio" name="q14" value="D"><span class="custom-radio"></span><span>D. Thành phần giai cấp</span></label></div></div>
                         <div id="quiz-results">
                             <h2>HOÀN THÀNH!</h2>
                             <p id="score-text"></p>
@@ -426,7 +881,7 @@
                     </div>
                 </div>
                 <div class="presentation-footer">
-                    <div class="credits"><p><b>Trình bày:</b> Tên Nhóm</p><p><b>GVHD:</b> Tên Giảng Viên</p></div>
+                    <div class="credits"><p><b>Trình bày:</b> Nhóm 10</p><p><b>GVHD:</b> Nguyễn Thị Hằng</p></div>
                     <div class="slide-nav-buttons"><button class="slide-nav-button prev-slide">← TRƯỚC</button><button class="slide-nav-button next-slide" disabled>TIẾP THEO →</button></div>
                 </div>
             </div>
